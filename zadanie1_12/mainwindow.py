@@ -15,6 +15,32 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.ui.dod.clicked.connect(self.add)
+        self.ui.top.clicked.connect(self.add)
+        self.ui.del_top.clicked.connect(self.add)
+        ##self.ui.cik.clicked.connect(self.cik)
+    def add(self):
+        name = self.ui.name.text()
+        avtor = self.ui.avtor.text()
+
+        if not name:
+            self.ui.name.setText("Где название!?")
+        else:
+            pass
+        if not svtor:
+            self.ui.avtor.setText("Где автор?!")
+        else:
+            pass
+
+        got = self.ui.got.text()
+
+        if isinstance(got, int) and 1500 <= got <= 2100:
+            pass
+        else:
+            self.ui.got.setText("Не вероное значение"\n"Число не находится в диапазоне от 1500 до 2100 или не является числом")
+
+        
+
 
 
 
