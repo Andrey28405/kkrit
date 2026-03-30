@@ -1,7 +1,7 @@
 # This Python file uses the following encoding: utf-8
 import sys
 
-from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
@@ -22,12 +22,13 @@ class MainWindow(QMainWindow):
     def add(self):
         name = self.ui.name.text()
         avtor = self.ui.avtor.text()
+        box = str(self.ui.box.currentText())
 
         if not name:
             self.ui.name.setText("Где название!?")
         else:
             pass
-        if not svtor:
+        if not avtor:
             self.ui.avtor.setText("Где автор?!")
         else:
             pass
@@ -37,9 +38,28 @@ class MainWindow(QMainWindow):
         if isinstance(got, int) and 1500 <= got <= 2100:
             pass
         else:
-            self.ui.got.setText("Не вероное значение"\n"Число не находится в диапазоне от 1500 до 2100 или не является числом")
+            self.ui.got.setText("Не вероное значение")
 
-        
+
+        row = self.ui.table.rowCount()
+        self.ui.table.insertRow(row)
+
+        col = self.ui.table.columnCount()
+        self.ui.table.insertColumn(col)
+
+        self.ui.table.setItem(row, col, QTableWidgetItem())
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
