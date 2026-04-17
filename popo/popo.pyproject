@@ -1,0 +1,9 @@
+{
+    "files": [
+        "main.py",
+        "main.ui",
+        "dialog.ui",
+        "ui_main.py",
+        "ui_dialog.py"
+    ]
+}
