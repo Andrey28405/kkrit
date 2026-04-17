@@ -6,21 +6,23 @@ from ui_form import Ui_MainWindow
 import resources_rc
 
 
-class MainWindow(QMainWindow, Ui_MainWindow):
-	def __init__(self, parent=None):
-		super().__init__(parent)
-		self.setupUi(self)
-
-
-
-		self.pushButton.clicked.connect(self.add)
-		self.label.setScaledContents(True)
-		self.label.setFixedSize(400, 250)
-
+class MainWindow(QMainWindow):
+	def __init__(self):
+		super(MainWindow, self).__init__()
+		self.ui = Ui_MainWindow()
+		self.ui.setupUi(self)
+		self.ui.pushButton.clicked.connect(self.add)
+		self.ui.label.setScaledContents(True)
+		self.ui.label.setFixedSize(400, 250)
+		try:
+			with open("style.qss", "r", encoding="utf-8") as f:
+				self.setStyleSheet(f.read())
+		except FileNotFoundError:
+			print("Файл style.qss не найден!")
 
 	def add(self):
 
-		if self.checkBox.isChecked():
+		if self.ui.checkBox.isChecked():
 			QMessageBox.information(self, "Ураа", "Спасибо большое!!!!!!!!!")
 		else:
 			QMessageBox.information(self, "(((", "Эх, ну мы сами виноваты")
@@ -28,8 +30,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
 	app = QApplication([])
-	with open("style.qss", "r") as f:
-		app.setStyleSheet(f.read())
 	window = MainWindow()
 	window.show()
 	sys.exit(app.exec())

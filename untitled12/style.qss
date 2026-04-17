@@ -1,15 +1,17 @@
-
 QMainWindow {
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                stop:0 #000000, stop:1 #1e272c);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #2b3a42, stop:1 #1e272c);
+	color: white;
+	font-size: 14px;
+	font-weight: Times New Roman;
+	text-align: center;
 }
 
 QPushButton {
-    background-color: #000000;
+    background-color: #34495e;
     color: white;
     border: 1px solid #2c3e50;
-    border-radius: 5px;
-    padding: 5px 10px;
+	border-radius: 5px;
+	padding: 5px 10px;
     min-width: 80px;
 }
 
@@ -24,24 +26,24 @@ QPushButton:pressed {
 QComboBox {
     background-color: #34495e;
     color: white;
-    border: 10px solid #00FF00;
-    border-radius: 7px;
+    border: 1px solid #2c3e50;
+    border-radius: 3px;
     padding: 2px 20px 2px 5px;
 }
 
+
+QComboBox {
+    padding: 5px;
+    border: 1px solid #DDD;
+}
+
 QComboBox::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-    width: 16px;
-    height: 16px;
-    border-left-width: 1px;
-    border-left-color: #2c3e50;
-    border-left-style: solid;
+    width: 20px;
+    border-left: 1px solid #DDD;
 }
 
 QComboBox::down-arrow {
     image: url(:/images/images/icon.jpeg);
-    width: 30px;  
-    height: 30px; 
+    width: 18px; 
+    height: 18px; 
 }
-
