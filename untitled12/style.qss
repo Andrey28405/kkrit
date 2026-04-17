@@ -1,0 +1,47 @@
+
+QMainWindow {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                stop:0 #000000, stop:1 #1e272c);
+}
+
+QPushButton {
+    background-color: #000000;
+    color: white;
+    border: 1px solid #2c3e50;
+    border-radius: 5px;
+    padding: 5px 10px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #2980b9;
+}
+
+QPushButton:pressed {
+    background-color: #1c5980;
+}
+
+QComboBox {
+    background-color: #34495e;
+    color: white;
+    border: 10px solid #00FF00;
+    border-radius: 7px;
+    padding: 2px 20px 2px 5px;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 16px;
+    height: 16px;
+    border-left-width: 1px;
+    border-left-color: #2c3e50;
+    border-left-style: solid;
+}
+
+QComboBox::down-arrow {
+    image: url(:/images/images/icon.jpeg);
+    width: 30px;  
+    height: 30px; 
+}
+

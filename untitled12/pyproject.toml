@@ -1,0 +1,5 @@
+[project]
+name = "PySide Project"
+
+[tool.pyside6-project]
+files = ["mainwindow.py", "resources.qrc", "resources_rc.py", "ui_form.py", "untitled.ui"]
