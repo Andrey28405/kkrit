@@ -1,0 +1,5 @@
+[project]
+name = "PySide"
+
+[tool.pyside6-project]
+files = ["auth.py", "auth.ui", "form.ui", "main.py", "rg_client.ui", "ui_auth.py", "ui_client.py"]

@@ -1,0 +1,59 @@
+ #sidebar {
+                background-color: #2d4d32;
+            }
+            #menuButton {
+                background-color: transparent;
+                color: #ffffff;
+                border: none;
+                padding: 10px;
+                text-align: left;
+                font-size: 14px;
+            }
+            #menuButton:hover {
+                background-color: #3e6345;
+            }
+            #contentArea {
+                background-color: #f0f4f0;
+            }
+            #headerLabel {
+                font-size: 22px;
+                font-weight: bold;
+                color: #1a331d;
+                margin-top: 20px;
+            }
+            #subHeader {
+                font-size: 16px;
+                color: #1a331d;
+                margin-bottom: 20px;
+            }
+            #card {
+                background-color: #f7f3d7;
+                border: 2px solid #b5b198;
+                border-radius: 10px;
+                padding: 15px;
+            }
+            #cardType {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+            #cardTitle {
+                font-size: 16px;
+                font-weight: bold;
+                color: #1a331d;
+            }
+            #cardButton {
+                background-color: #f7f3d7;
+                border: 1px solid #333;
+                border-radius: 5px;
+                padding: 8px;
+                font-size: 16px;
+            }
+            #cardButton:hover {
+                background-color: #e5e0c0;
+            }
+            #statsFrame {
+                background-color: #ffffff;
+                border-top: 1px solid #ccc;
+                max-height: 50px;
+            }

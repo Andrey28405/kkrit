@@ -15,10 +15,18 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLineEdit" name="lineEdit_name"/>
+    <widget class="QLineEdit" name="lineEdit_name">
+     <property name="placeholderText">
+      <string>Имя</string>
+     </property>
+    </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit_surname"/>
+    <widget class="QLineEdit" name="lineEdit_surname">
+     <property name="placeholderText">
+      <string>Фамилия</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDateEdit" name="dateEdit_birth"/>

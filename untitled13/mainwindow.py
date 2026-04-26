@@ -1,131 +1,116 @@
-# This Python file uses the following encoding: utf-8
 import sys
-import sqlite3
-
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QDialog, QMessageBox, QListWidgetItem
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMessageBox, QDialog
+from PySide6.QtSql import QSqlDatabase, QSqlQuery
+from PySide6.QtCore import Qt
 
-
-# Important:
-# You need to run the following command to generate the ui_form.py file
-#     pyside6-uic form.ui -o ui_form.py, or
-#     pyside2-uic form.ui -o ui_form.py
 from ui_form import Ui_MainWindow
-from ui_Widget import Ui_Widget
-from ui_dialog import Ui_Dialog
-class BurgerWidget(QWidget, Ui_Widget):
-	def __init__(self, burger_id, name, path, price):
+from ui_Widget import Ui_Widget as Ui_BurgerWidget
+from ui_dialog import Ui_Dialog as Ui_OrderDialog
+class BurgerWidget(QWidget, Ui_BurgerWidget):
+	def __init__(self, burger_id, name, image_path, price):
 		super().__init__()
 		self.setupUi(self)
 		self.burger_id = burger_id
-		self.path = path
+		self.image_path = image_path
 		self.label_name.setText(name)
-		self.label_image.setPixmap(QPixmap(path).scaled(150,150))
-		self.label_price.setText(str(f"{price} ₽"))
+		self.label_price.setText(f"{price} ₽")
+		self.label_image.setPixmap(QPixmap(image_path).scaled(150, 150, Qt.KeepAspectRatio))
 
-		self.mouserPressEvent = lambda event: self.showDialog()
-	def showDialog(self):
-		dialog = Dialog(self.burger_id,self.path,self)
+		self.mousePressEvent = lambda event: self.showOrderDialog()
+
+	def showOrderDialog(self):
+		dialog = OrderDialog(self.burger_id, self.image_path, parent=self)
 		dialog.exec()
 
-class Dialog(QDialog, Ui_Dialog):
-	def __init__(self, burger_id, path):
-		super().__init__()
+class OrderDialog(QDialog, Ui_OrderDialog):
+	def __init__(self, burger_id, image_path, parent=None):
+		super().__init__(parent)
 		self.setupUi(self)
 		self.burger_id = burger_id
-		self.image.setPixmap(QPixmap(path).scaled(150,150))
-
-		self.conn = sqlite3.connect("Wood.db")
-		self.cursor = self.conn.cursor()
-
+		self.image.setPixmap(QPixmap(image_path).scaled(200, 200, Qt.KeepAspectRatio))
 		self.loadWeights()
 		self.loadAdditives()
+
 		self.buttonBox.accepted.connect(self.calculateTotal)
 
 	def loadWeights(self):
-		query = "SELECT weight, price_w FROM weights ORDER BY weight ASC;"
-		self.cursor.execute(query)
-		weights = self.cursor.fetchall()
-
-		for weight, price in weights:
-			self.ComboBox.addItem(f"{weight} гр (+{price} руб)", price)
+		query = QSqlQuery("SELECT weight, price_w FROM weights")
+		while query.next():
+			w_name = query.value(0)
+			w_price = query.value(1)
+			self.comboBox.addItem(f"{w_name} (+{w_price}₽)", w_price)
 
 	def loadAdditives(self):
-		query = "SELECT name, price FROM additives ORDER BY name ASC;"
-		self.cursor.execute(query)
-		additives = self.cursor.fetchall()
-
-		for name, price in additives:
-			item = QListWidgetItem(f"{name} (+{price} руб)")
+		query = QSqlQuery("SELECT name, price FROM additives")
+		while query.next():
+			name = query.value(0)
+			price = query.value(1)
+			item = QListWidgetItem(f"{name} (+{price}₽)")
+			item.setData(Qt.UserRole, price) # Сохраняем цену внутри айтема
 			item.setCheckState(Qt.Unchecked)
-			self.additivesList.addItem(item)
+			self.listWidget.addItem(item)
 
 	def calculateTotal(self):
-		query = "SELECT base_price FROM food WHERE id=?;"
-		self.cursor.execute(query, (self.food_id,))
-		base_price = self.cursor.fetchone()[0]
+		query = QSqlQuery()
+		query.prepare("SELECT base_price FROM food WHERE id = ?")
+		query.addBindValue(self.burger_id)
+		query.exec()
 
-		weight_price = self.weightComboBox.currentData()
-		if weight_price is None:
-			weight_price = 0
+		if query.next():
+			total = query.value(0)
+		else:
+			return
 
-		extra_cost = 0
-		for i in range(self.additivesList.count()):
-			item = self.additivesList.item(i)
+		total += self.comboBox.currentData()
+
+		selected_names = []
+		for i in range(self.listWidget.count()):
+			item = self.listWidget.item(i)
 			if item.checkState() == Qt.Checked:
-				price = float(item.text().split("(")[1].strip(" руб)"))
-				extra_cost += price
+				total += item.data(Qt.UserRole)
+				selected_names.append(item.text().split(" (")[0])
+		count = self.spinBox.value()
+		final_sum = total * count
 
-				# Расчет итоговой суммы
-		total_price = base_price + weight_price + extra_cost
-
-		       # Сообщаем пользователю итоговую сумму
-		QMessageBox.information(self, "Итоговая сумма",f"Ваш заказ: {total_price:.2f} руб.",buttons=QMessageBox.Ok)
-		self.conn.close()
+		summary = f"Бургер: {count} шт.\nДобавки: {', '.join(selected_names) if selected_names else 'нет'}\nИтого: {final_sum} ₽"
+		QMessageBox.information(self, "Заказ оформлен", summary)
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-	def __init__(self, parent=None):
-		super().__init__(parent)
+	def __init__(self):
+		super().__init__()
 		self.setupUi(self)
-
 		self.scrollAreaWidgetContents.setLayout(self.gridLayout)
-		try:
-			self.con = sqlite3.connect("Wood.db")
-		except sqlite3.Error as e:
-			QMessageBox.critical(self, "Критическая ошибка", f"Не удалось открыть базу данных: {e}")
+		self.db = QSqlDatabase.addDatabase("QSQLITE")
+		self.db.setDatabaseName("Wood.db")
+
+		if not self.db.open():
+			QMessageBox.critical(self, "Ошибка", "Не удалось открыть Wood.db")
 			return
-		self.load_burger_data()
 
-	def load_burger_data(self):
-		query = "SELECT id, name, image_path, base_price FROM food"
-		records = self.con.execute(query).fetchall()
+		self.load_burgers()
 
+	def load_burgers(self):
+		query = QSqlQuery("SELECT id, name, image_path, base_price FROM food")
 		row, col = 0, 0
 		max_col = 3
-		for record in records:
-			burger_id = record[0]
-			name = record[1]
-			path = record[2]
-			price = record[3]
 
-			burger_widget = BurgerWidget(burger_id, name, path, price)
-			self.gridLayout.addWidget(burger_widget, row, col)
+		while query.next():
+			b_id = query.value(0)
+			name = query.value(1)
+			img = query.value(2)
+			price = query.value(3)
+
+			widget = BurgerWidget(b_id, name, img, price)
+			self.gridLayout.addWidget(widget, row, col)
 
 			col += 1
 			if col >= max_col:
 				col = 0
 				row += 1
 
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    widget = MainWindow()
-    widget.show()
-    sys.exit(app.exec())
+	app = QApplication(sys.argv)
+	window = MainWindow()
+	window.show()
+	sys.exit(app.exec())
